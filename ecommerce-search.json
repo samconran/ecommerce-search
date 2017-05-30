@@ -1,0 +1,14 @@
+{
+    "id" : "ecommerce_search",
+    "title": "E-Commerce Search",
+    "scripts": {
+      "ecommerce-search": {
+          "title": "E-Commerce Search",
+          "auto_inject": true,
+          "template": "https://conrantest.com/ecommerce-search/ui.html",
+          "js": "https://conrantest.com/ecommerce-search/page.js",
+          "remote_js": true,
+          "remote_template": true
+      }
+    }
+}

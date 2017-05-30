@@ -1,0 +1,224 @@
+<script type="text/x-handlebars">
+
+  <style>
+    * {
+      user-select: none;
+      cursor: default;
+    }
+    table {
+      width: 100%;
+      border: 2px solid black;
+      margin: 15px 0;
+      table-layout: fixed;
+    }
+    tr:hover {
+      background-color: #e0f2f2;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 5px;
+      height: 25px;
+      width:50%;
+      text-align: center;
+      vertical-align: middle;
+      font-size : 12px;
+    }
+    .copyable {
+      cursor: pointer;
+    }
+    .copyable:hover {
+      background-color: #abebed;
+    }
+    .table_title, .table_title:hover {
+      font-size : 18px;
+      background-color: #b1e0e2;
+    }
+    p {
+      font-size: 14px;
+    }
+    #email {
+      bottom: 2px;
+    }
+    #email p {
+      font-size: 12px;
+    }
+    .header {
+      font-weight: 600;
+      text-align: center;
+      font-size: 32px;
+      color:#000000;
+    }
+    .error {
+      color:#b40000;
+    }
+    .fine {
+      color:#00b42d;
+    }
+    a {
+      color: #00A8B6;
+      cursor: pointer;
+    }
+    a:hover {
+      color:#2e8eff;
+    }
+    .tab {
+      background-color: #e0f2f2;
+      border: 1px solid black;
+      width: 50%;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .tab.selected {
+      background-color: #b1e0e2;
+      font-weight: 800;
+      cursor: default;
+    }
+    .btn_cst {
+      background-color: #e0f2f2;
+      padding: 10px;
+      border: 1px solid #b1e0e2;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+    .btn_cst:hover {
+      background-color: #b1e0e2;
+    }
+  </style>
+
+    {{#if reset}}
+      <div>
+        <p>In order to search through this profile's templates, please press the button below:</p>
+        <br/>
+        <button id="main_button" class="btn_cst">Search templates</button>
+      </div>
+
+    {{/if}}
+
+    {{#if loading}}
+      <h1>Please wait...</h1>
+      <br/>
+      <p>Loading {{loading.total}} templates for {{loading.account}}/{{loading.profile}}</p>
+    {{/if}}
+
+    {{#if results}}
+
+      <div class="header"><h>RESULTS</h></div>
+      <hr>
+      <div class="tab selected" style="float:left">Tag</div>
+      <div class="tab" style="float:right">Variable</div>
+      <p>Please find the results of the E-commerce Search for the profile {{results.profile}} below. You can sort the results by tag or by variable. In either case, the list of variables/tags is available to copy by clicking the table cell.</p>
+
+      <div class="results tab-tag">
+
+        {{#each results.tags}}
+
+        <table>
+          <tr>
+            <th class="table_title" colspan="2"> {{tag_name}} </th>
+          </tr>
+          <tr>
+            <th> UID </th>
+            <td> {{uid}} </td>
+          </tr>
+          <tr>
+            <th> Tag type </th>
+            <td> {{tag_type}} </td>
+          </tr>
+          <tr>
+            <th> Variables </th>
+            <td class="copyable">
+              {{#each variables}}
+                {{this}}
+                <br/>
+              {{/each}}
+            </td>
+          </tr>
+        </table>
+
+        {{/each}}
+      </div>
+      <div class="results tag-var" hidden>
+        {{#each results.vars}}
+
+        <table>
+          <tr>
+            <th class="table_title" colspan="2"> {{variable}} </th>
+          </tr>
+          <tr>
+            <th> Tags </th>
+            <td class="copyable">
+              {{#each tags}}
+                ({{uid}}) {{tag_name}}
+                <br/>
+              {{/each}}
+            </td>
+          </tr>
+        </table>
+
+        {{/each}}
+      </div>
+    {{/if}}
+
+    <hr>
+    <div id="email"><p>Comments / bugs / feature requests? Send them to <a href="mailto:sam.conran@tealium.com">sam.conran@tealium.com</a></p></div>
+
+    <script type='text/javascript'>
+
+      var tool_name = 'ecommerce_search',
+          script_name = 'ecommerce-search';
+
+      $('#main_button').on('click', function(){
+        console.log('clicked!');
+        tTools.invokeFunction('ecom_searchHandler', 'template_check');
+        console.log('sent!');
+      });
+      $('td.copyable').on('click', function(){
+        console.log('click!');
+        $(this).css('user-select','auto');
+        $(this).copyText();
+        $(this).css('user-select','none');
+      })
+
+      $('div.tab').on('click', function(){
+        if($(this).hasClass('selected')) return;
+
+        var tab = $(this).text();
+        $('.tab.selected').removeClass('selected');
+        $(this).addClass('selected');
+
+        $('.results').toggle();
+      });
+
+      jQuery.fn.copyText = function(){
+        var doc = document,
+            element = this[0],
+            range,
+            selection;
+        if (window.getSelection) {
+            selection = window.getSelection();
+            range = document.createRange();
+            range.selectNodeContents(element);
+            selection.removeAllRanges();
+            console.log('doing...');
+            selection.addRange(range);
+            document.execCommand("Copy", false, null);
+            selection.removeRange(range);
+            sendMsg('Copy Successful','Contents of table cell added to clipboard.');
+            console.log('done!');
+        } else {
+          console.log('Error!')
+        }
+      };
+
+      function sendMsg(title, body) {
+        chrome.runtime.sendMessage({"tealium_tool":tool_name,"scriptId":script_name,"message":true,"title":title,"body":body});
+      }
+      function sendErr(title, body) {
+        chrome.runtime.sendMessage({"tealium_tool":tool_name,"scriptId":script_name,"error":true,"title":title,"body":body});
+      }
+    </script>
+
+</script>
