@@ -5,8 +5,8 @@
       "ecommerce-search": {
           "title": "E-Commerce Search",
           "auto_inject": true,
-          "template": "https://raw.githubusercontent.com/samconran/ecommerce-search/master/ui.html",
-          "js": "https://raw.githubusercontent.com/samconran/ecommerce-search/master/page.js",
+          "template": "https://rawgit.com/samconran/ecommerce-search/master/ui.html",
+          "js": "https://rawgit.com/samconran/ecommerce-search/master/page.js",
           "remote_js": true,
           "remote_template": true
       }
