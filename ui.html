@@ -101,6 +101,9 @@
       <h1>Please wait...</h1>
       <br/>
       <p>Loading {{loading.total}} templates for {{loading.account}}/{{loading.profile}}</p>
+      {{#if loading.large}}
+        <p>There are a fair few templates in this profile, so this may take a few seconds!</p>
+      {{/if}}
     {{/if}}
 
     {{#if results}}
@@ -183,9 +186,7 @@
       })
 
       $('div.tab').on('click', function(){
-        if($(this).hasClass('selected')) return;
-
-        var tab = $(this).text();
+        if($(this).hasClass('selected')) return false;
         $('.tab.selected').removeClass('selected');
         $(this).addClass('selected');
 
@@ -195,22 +196,16 @@
       jQuery.fn.copyText = function(){
         var doc = document,
             element = this[0],
-            range,
-            selection;
-        if (window.getSelection) {
-            selection = window.getSelection();
             range = document.createRange();
-            range.selectNodeContents(element);
-            selection.removeAllRanges();
-            console.log('doing...');
-            selection.addRange(range);
-            document.execCommand("Copy", false, null);
-            selection.removeRange(range);
-            sendMsg('Copy Successful','Contents of table cell added to clipboard.');
-            console.log('done!');
-        } else {
-          console.log('Error!')
-        }
+            selection = window.getSelection();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        console.log('doing...');
+        selection.addRange(range);
+        document.execCommand("Copy", false, null);
+        selection.removeRange(range);
+        sendMsg('Copy Successful','Contents of table cell added to clipboard.');
+        console.log('done!');
       };
 
       function sendMsg(title, body) {

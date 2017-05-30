@@ -27,11 +27,11 @@ window.ecom_search.print_hi = function () {
 window.ecom_search.template_check = function (){
 
     if (!window.utui) {
-      tTools.sendError('You have to be in the TiQ interface!');
+      tTools.sendError('No UTUI!','In order to use this tool, you have to be inside the TiQ interface, logged into the desired profile.');
       return false;
     }
 
-    const ends = [')', '=', ' ', ';', ']', '}', '\']', '"]', '.', ',', '['],
+    const ends = [')', '=', ' ', ';', ']', '}', '\']', '"]', '.', ',', '[', '!'],
           b_ = 'b._c';
 
     // function httpGet(url, output, index, num, total) {
@@ -62,12 +62,17 @@ window.ecom_search.template_check = function (){
 
     if (!Object.keys(templates).length){
         let num = 0,
-            total = Object.keys(utui.data.manage).length;
+            total = Object.keys(utui.data.manage).length,
+            large = false;
+
+          if (total > 100) large = true;
+
         tTools.send({
           loading: {
-            account : account,
-            profile : profile,
-            total : total
+            account,
+            profile,
+            total,
+            large
           }
         })
         console.log('Performing first time templates load...')
@@ -112,12 +117,11 @@ window.ecom_search.template_check = function (){
           }
 
           let tag_name = utui.data.manage[uid].title,
-              tag_type = utui.data.manage[uid].tag_name;
-
-          tag_name = (tag_name.length <= 35) ? tag_name : tag_name.substring(0,35) + '...';
+              tag_type = utui.data.manage[uid].tag_name,
+              tag_name_reduction = (tag_name.length <= 35) ? tag_name : tag_name.substring(0,35) + '...';
 
           if(variables.length > 0) {
-            results_tags.push({uid, tag_name, tag_type, variables});
+            results_tags.push({uid, tag_name:tag_name_reduction, tag_type, variables});
 
             for (let i in variables) {
               let variable = variables[i],
