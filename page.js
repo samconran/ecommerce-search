@@ -74,6 +74,10 @@ window.ecom_search.template_check = window.ecom_search.template_check || functio
             large = false;
 
         if (total > 100) large = true;
+        if (total === 0) {
+          tTools.sendError("No templates!","There are no tags in this profile.");
+          return false;
+        }
 
         tTools.send({
           loading: {
