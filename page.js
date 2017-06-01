@@ -134,7 +134,7 @@ window.ecom_search.template_check = window.ecom_search.template_check || functio
             for (let i in variables) {
               let variable = variables[i],
                   exists = false,
-                  mapped = (ext[variable.substring(1)]).substring(3),
+                  mapped = (ext[variable.substring(1)] && ext[variable.substring(1)] !== 'none') ? (ext[variable.substring(1)]).substring(3) : "none",
                   index;
 
               exists = results_vars.some(function (e, i) {
