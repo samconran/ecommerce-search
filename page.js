@@ -4,9 +4,9 @@
 **********************************/
 
 
-window.ecom_searchHandler = function (a) {
+window.ecom_searchHandler = window.ecom_searchHandler || function (a) {
   if (!window.ecom_search[a]) {
-    tTools.sendError('No such function!');
+    tTools.sendError('No such function!', 'Internal function error. Please contact Sam Conran and inform him of the issue.');
     return false;
   }
   window.ecom_search[a]();
@@ -14,24 +14,23 @@ window.ecom_searchHandler = function (a) {
 
 window.ecom_search = window.ecom_search || {};
 
-window.ecom_search.reset = function () {
+window.ecom_search.reset = window.ecom_search.reset || function () {
   tTools.send({
     reset : true
   })
 }
 
-window.ecom_search.print_hi = function () {
+window.ecom_search.print_hi = window.ecom_search.print_hi || function () {
   console.log('hi');
 }
 
-window.ecom_search.template_check = function (){
-
+window.ecom_search.template_check = window.ecom_search.template_check || function (){
     if (!window.utui) {
       tTools.sendError('No UTUI!','In order to use this tool, you have to be inside the TiQ interface, logged into the desired profile.');
       return false;
     }
 
-    const ends = [')', '=', ' ', ';', ']', '}', '\']', '"]', '.', ',', '[', '!'],
+    const ends = [')', '=', ' ', ';', ']', '}', '\'', '"', '.', ',', '[', '!', ':', '+'],
           b_ = 'b._c';
 
     // function httpGet(url, output, index, num, total) {
@@ -46,13 +45,22 @@ window.ecom_search.template_check = function (){
         // xmlHttp.send( null );
     // }
 
+    function find_ecom () {
+      for (var i in utui.data.customizations){
+        var j = utui.data.customizations[i];
+        if(j.id == '100005') return i;
+      }
+      return 0;
+    }
+
     var results_tags = [],
         results_vars = [],
         utk = utui.util.getUTK(),
         account = utui.profile.lastAccount,
         profile = utui.profile.lastProfile,
         revision = utui.profile.lastRevision,
-        key_id = account+'.'+profile;
+        key_id = account+'.'+profile,
+        ext = (find_ecom()) ? utui.data.customizations[find_ecom()] : 0;
 
     //window.ecom_search.data = (localStorage['ecom_search.data']) ? JSON.parse(localStorage['ecom_search.data']) : window.ecom_search.data || {};
     window.ecom_search.data = window.ecom_search.data || {};
@@ -65,7 +73,7 @@ window.ecom_search.template_check = function (){
             total = Object.keys(utui.data.manage).length,
             large = false;
 
-          if (total > 100) large = true;
+        if (total > 100) large = true;
 
         tTools.send({
           loading: {
@@ -111,7 +119,7 @@ window.ecom_search.template_check = function (){
               let end = Math.min.apply(Math, inds),
                   result = sub_string.substring(0, end);
 
-              if (variables.indexOf(result) == -1) variables.push(result);
+              if (variables.indexOf(result) === -1) variables.push(result);
               j = sub_string;
               b_index = j.indexOf(b_);
           }
@@ -126,6 +134,7 @@ window.ecom_search.template_check = function (){
             for (let i in variables) {
               let variable = variables[i],
                   exists = false,
+                  mapped = (ext[variable.substring(1)]).substring(3),
                   index;
 
               exists = results_vars.some(function (e, i) {
@@ -137,11 +146,10 @@ window.ecom_search.template_check = function (){
               });
 
               if (!exists) {
-
                 let tags = [{uid, tag_name, tag_type}];
-
                 results_vars.push({
                   variable,
+                  mapped,
                   tags
                 })
               } else {

@@ -29,6 +29,9 @@
     .copyable:hover {
       background-color: #abebed;
     }
+    .copyable:active {
+      background-color: #b1e0e2;
+    }
     .table_title, .table_title:hover {
       font-size : 18px;
       background-color: #b1e0e2;
@@ -86,6 +89,22 @@
     .btn_cst:hover {
       background-color: #b1e0e2;
     }
+    .header .button {
+      border: 1px solid black;
+      padding: 10px;
+    }
+    .header .button:hover {
+      background-color: #b1e0e2;
+      cursor: pointer;
+    }
+    .header .button:active {
+      background-color: #b1e0e2;
+      color: #696969;
+    }
+    .header h {
+      position: relative;
+      top: 5px;
+    }
   </style>
 
     {{#if reset}}
@@ -107,61 +126,81 @@
     {{/if}}
 
     {{#if results}}
+      <div id="results_view">
+        <div class="header">
+          <span id="redo" class="button glyphicon glyphicon-refresh" aria-hidden="true" style="float:left"></span>
+          <h>RESULTS</h>
+          <span id="export" class="button glyphicon glyphicon-save" aria-hidden="true" style="float:right"></span>
+        </div>
+        <hr>
+        <div class="tab selected" style="float:left">Tag</div>
+        <div class="tab" style="float:right">Variable</div>
+        <p>Please find the results of the E-commerce Search for the profile {{results.profile}} below. You can sort the results by tag or by variable. In either case, the list of variables/tags is available to copy by clicking the table cell.</p>
 
-      <div class="header"><h>RESULTS</h></div>
-      <hr>
-      <div class="tab selected" style="float:left">Tag</div>
-      <div class="tab" style="float:right">Variable</div>
-      <p>Please find the results of the E-commerce Search for the profile {{results.profile}} below. You can sort the results by tag or by variable. In either case, the list of variables/tags is available to copy by clicking the table cell.</p>
+        <div class="results tab-tag">
 
-      <div class="results tab-tag">
+          {{#each results.tags}}
 
-        {{#each results.tags}}
+          <table>
+            <tr>
+              <th class="table_title" colspan="2"> {{tag_name}} </th>
+            </tr>
+            <tr>
+              <th> UID </th>
+              <td> {{uid}} </td>
+            </tr>
+            <tr>
+              <th> Tag type </th>
+              <td> {{tag_type}} </td>
+            </tr>
+            <tr>
+              <th> Variables </th>
+              <td class="copyable">
+                {{#each variables}}
+                  {{this}}
+                  <br/>
+                {{/each}}
+              </td>
+            </tr>
+          </table>
 
-        <table>
-          <tr>
-            <th class="table_title" colspan="2"> {{tag_name}} </th>
-          </tr>
-          <tr>
-            <th> UID </th>
-            <td> {{uid}} </td>
-          </tr>
-          <tr>
-            <th> Tag type </th>
-            <td> {{tag_type}} </td>
-          </tr>
-          <tr>
-            <th> Variables </th>
-            <td class="copyable">
-              {{#each variables}}
-                {{this}}
-                <br/>
-              {{/each}}
-            </td>
-          </tr>
-        </table>
+          {{/each}}
+        </div>
+        <div class="results tag-var" hidden>
+          {{#each results.vars}}
 
-        {{/each}}
+          <table>
+            <tr>
+              <th class="table_title" colspan="2"> {{variable}} </th>
+            </tr>
+            {{#if mapped}}
+              <tr>
+                <th> Mapped variable: </th>
+                <td> {{mapped}} </td>
+              </tr>
+            {{/if}}
+            <tr>
+              <th> Tags </th>
+              <td class="copyable">
+                {{#each tags}}
+                  ({{uid}}) {{tag_name}}
+                  <br/>
+                {{/each}}
+              </td>
+            </tr>
+          </table>
+
+          {{/each}}
+        </div>
       </div>
-      <div class="results tag-var" hidden>
-        {{#each results.vars}}
-
-        <table>
-          <tr>
-            <th class="table_title" colspan="2"> {{variable}} </th>
-          </tr>
-          <tr>
-            <th> Tags </th>
-            <td class="copyable">
-              {{#each tags}}
-                ({{uid}}) {{tag_name}}
-                <br/>
-              {{/each}}
-            </td>
-          </tr>
-        </table>
-
-        {{/each}}
+      <div id="results_save" hidden>
+        <div class="header">
+          <span id="back" class="button glyphicon glyphicon-arrow-left" aria-hidden="true" style="float:left"></span>
+          <h>EXPORT</h>
+          <span id="export" class="button glyphicon glyphicon-ok" aria-hidden="true" style="float:right"></span>
+        </div>
+        <hr>
+        <p>content!</p>
       </div>
     {{/if}}
 
@@ -173,6 +212,14 @@
       var tool_name = 'ecommerce_search',
           script_name = 'ecommerce-search';
 
+      $('#redo').on('click', function() {
+        console.log('clicked!');
+        tTools.invokeFunction('ecom_searchHandler', 'reset');
+      });
+      $('#export').add('#back').on('click', function() {
+        console.log('clicked!');
+        $('#results_view').add('#results_save').toggle();
+      });
       $('#main_button').on('click', function(){
         console.log('clicked!');
         tTools.invokeFunction('ecom_searchHandler', 'template_check');
