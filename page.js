@@ -5,11 +5,14 @@
 
 
 window.ecom_searchHandler = window.ecom_searchHandler || function (a) {
+  a = a.split('|');
+  p = a.slice(1);
+  a = a[0];
   if (!window.ecom_search[a]) {
     tTools.sendError('No such function!', 'Internal function error. Please contact Sam Conran and inform him of the issue.');
     return false;
   }
-  window.ecom_search[a]();
+  window.ecom_search[a](...p);
 }
 
 window.ecom_search = window.ecom_search || {};
@@ -179,6 +182,68 @@ window.ecom_search.template_check = window.ecom_search.template_check || functio
       })
     }
     //localStorage.setItem('ecom_search.data',(JSON.stringify(window.ecom_search.data)))
+}
+
+window.ecom_search.download = window.ecom_search.download || function (a, b, c){
+
+  let account = utui.profile.lastAccount,
+      profile = utui.profile.lastProfile,
+      res_vars = window.ecom_search.data[account+'.'+profile].results_vars.slice(0),
+      res_tags = window.ecom_search.data[account+'.'+profile].results_tags.slice(0),
+      results_vars = ato(res_vars, 'v'),
+      results_tags = ato(res_tags, 't'),
+      v = "vars",
+      t = "tags",
+      results = {
+        "Results_Variables" : results_vars,
+        "Results_Tags" : results_tags
+      };
+
+
+  if(!(results_vars && results_tags)) {
+    tTools.sendError('No UTUI!','In order to use this tool, you have to be inside the TiQ interface, logged into the desired profile.');
+    return false;
+  }
+
+  var rB = JSON.stringify(results, null, '\t'),
+      rV = JSON.stringify(results_vars, null, '\t'),
+      rT = JSON.stringify(results_tags, null, '\t');
+
+  var type = (a == 'txt') ? "text/plain" : "application/json";
+
+  if((b == v || b == t) && c && (c == v || c == t)) dl(rB, "Results." + a, type);
+  else if(b == v || c && c == v) dl(rV, "Results_Vars." + a, type);
+  else if(b == t || c && c == t) dl(rT, "Results_Tags." + a, type);
+
+  function dl (text, name, type) {
+      var a = document.createElement("a");
+      var file = new Blob([text], {type: type});
+      a.href = URL.createObjectURL(file);
+      a.download = name;
+      a.click();
+  }
+
+  function ato (arr, q) {
+    if(q === 'v') {
+      return arr.reduce(function(acc, cur, i) {
+        acc[cur.variable] = {
+          "mapped_vars" : cur.mapped,
+          "tags" : cur.tags
+        };
+        return acc;
+      }, {});
+    }
+    if (q === 't') {
+      return arr.reduce(function(acc, cur, i) {
+        acc[cur.tag_name] = {
+          "UID": cur.uid,
+          "tag_type" : cur.tag_type,
+          "variables" : cur.variables
+        };
+        return acc;
+      }, {});
+    }
+  }
 }
 
 window.ecom_search.reset();
