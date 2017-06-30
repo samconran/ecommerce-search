@@ -299,11 +299,19 @@
             param += '|' + $(this).val();
           }
         });
+        if (param.indexOf('|') === -1) {
+          sendErr('No File Type Selected!', 'You must select a file type (either ".txt" or ".json") in order to download these results.');
+          return false;
+        }
         $('.dl-cb').each(function () {
           if ($(this).prop('checked')){
             param += '|' + $(this).val();
           }
         });
+        if (param.indexOf('tags') === -1 && param.indexOf('vars') === -1) {
+          sendErr('No Data Selected!', 'You must select some data (either tags or variables) in order to download these results.');
+          return false;
+        }
         if (param === 'download') {
           sendErr('No Data Selected', 'You haven\'t selected any of the given data ranges!');
           return false;

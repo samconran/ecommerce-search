@@ -23,12 +23,8 @@ window.ecom_search.reset = window.ecom_search.reset || function () {
   })
 }
 
-window.ecom_search.print_hi = window.ecom_search.print_hi || function () {
-  console.log('hi');
-}
-
 window.ecom_search.template_check = window.ecom_search.template_check || function (){
-    if (!window.utui) {
+    if (!window.utui || window.gApp) {
       tTools.sendError('No UTUI!','In order to use this tool, you have to be inside the TiQ interface, logged into the desired profile.');
       return false;
     }
