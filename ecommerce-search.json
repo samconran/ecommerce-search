@@ -1,14 +1,14 @@
 {
-    "id" : "ecommerce_search",
-    "title": "E-Commerce Search",
-    "scripts": {
-      "ecommerce-search": {
-          "title": "E-Commerce Search",
-          "auto_inject": true,
-          "template": "https://conrantest.com/ecommerce-search/ui.html",
-          "js": "https://conrantest.com/ecommerce-search/page.js",
-          "remote_js": true,
-          "remote_template": true
-      }
+  "id" : "ecommerce_search",
+  "title": "E-Commerce Search",
+  "scripts": {
+    "ecommerce-search": {
+        "title": "E-Commerce Search",
+        "auto_inject": true,
+        "template": "chttps://raw.githack.com/samconran/ecommerce-search/master/ui.html",
+        "js": "https://raw.githack.com/samconran/ecommerce-search/master/page.js",
+        "remote_js": true,
+        "remote_template": true
     }
+  }
 }
