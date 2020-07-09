@@ -89,7 +89,7 @@ window.ecom_search.template_check = window.ecom_search.template_check || functio
         })
         console.log('Performing first time templates load...')
         for (let i in utui.data.manage) {
-            let url = ('https://my.tealiumiq.com/urest/legacy/getTemplate?utk='+utk+'&account='+account+'&profile='+profile+'&revision='+revision+'&template=profile.'+i+'&cb='+Math.random()+'&_='+Date.now());
+            let url = ('https://sso..tealiumiq.com/urest/legacy/getTemplate?utk='+utk+'&account='+account+'&profile='+profile+'&revision='+revision+'&template=profile.'+i+'&cb='+Math.random()+'&_='+Date.now());
             let xmlHttp = new XMLHttpRequest();
             xmlHttp.addEventListener('load', function(){
               num++;
